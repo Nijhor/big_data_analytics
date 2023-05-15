@@ -1,0 +1,117 @@
+QUES 1
+
+Bomb.createOrReplaceTempView("Bomb")
+query2 = """
+          SELECT AirCraft,ContryFlyingMission,TargetCountry
+          FROM Bomb
+          WHERE TimeOnTarget< '1000'
+          """
+result2=spark.sql(query2)
+result2.show()
+
+QUES 2
+
+query3 = """
+          SELECT TargetCountry,  COUNT(TargetCountry) AS Attack_time
+          FROM Bomb
+          GROUP BY TargetCountry
+          ORDER BY COUNT(TargetCountry) DESC
+          """
+result3=spark.sql(query3)
+result3.show()
+
+QUES 3
+
+query3 = """
+          SELECT TargetCountry,  COUNT(TargetCountry) AS Attack_time
+          FROM Bomb
+          GROUP BY TargetCountry
+          ORDER BY COUNT(TargetCountry) DESC
+          """
+result3=spark.sql(query3)
+result3.show()
+result3.createOrReplaceTempView("result3")
+query4="""
+        SELECT Attack_time,TargetCountry
+        FROM result3
+        WHERE Attack_time = (SELECT MAX(Attack_time) FROM result3)
+        """
+result4=spark.sql(query4)
+result4.show()
+
+QUES4
+
+query5 = """
+          SELECT ContryFlyingMission,  COUNT(ContryFlyingMission) AS Most_Attack_time
+          FROM Bomb
+          GROUP BY ContryFlyingMission
+          ORDER BY COUNT(ContryFlyingMission) DESC
+          """
+result5=spark.sql(query5)
+result5.createOrReplaceTempView("result5")
+
+query6 = """
+          SELECT ContryFlyingMission, Most_Attack_time
+          FROM result5
+          WHERE Most_Attack_time = (SELECT MAX(Most_Attack_time) FROM result5 )
+          """
+result6=spark.sql(query6)
+result6.show()
+
+QUES 5
+
+query7 = """
+          SELECT TakeoffLocation, COUNT(TakeoffLocation)
+          FROM Bomb
+          GROUP BY TakeoffLocation
+          """
+result7=spark.sql(query7)
+result7.show()
+
+QUES 6
+
+query12 = """
+            SELECT COUNT(AirCraftType)
+            FROM Aircraft
+            WHERE AirCraftType == 'Fighter Jet'
+          """
+result12= spark.sql(query12)
+result12.show()
+
+QUES 7
+
+Aircraft.createOrReplaceTempView("Aircraft")
+query8="""
+      SELECT AirCraftType, COUNT(AirCraftType)
+      FROM Aircraft
+      GROUP BY AirCraftType
+      
+        """ 
+result8=spark.sql(query8)
+result8.show()
+
+QUES 8
+
+query9= """
+        SELECT AirCraftName, TargetCountry
+        FROM Bomb B, Aircraft A
+        WHERE B.AirCraft = A.AirCraft
+        """
+result9 = spark.sql(query9)
+result9.show()
+result9.createOrReplaceTempView("result9")
+query10 = """
+            SELECT AirCraftName, COUNT(AirCraftName) AS Most_used
+            FROM result9
+            GROUP BY AirCraftName
+          """
+result10 = spark.sql(query10)
+result10.show()
+result10.createOrReplaceTempView("result10")
+query11 = """
+            SELECT AirCraftName,Most_used
+            FROM result10
+            WHERE Most_used==(SELECT MAX(Most_used) FROM result10 )
+          """
+result11 = spark.sql(query11)
+result11.show()
